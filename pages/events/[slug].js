@@ -10,7 +10,7 @@ export default function EventPage() {
   return (
     <Layout>
         <h1>My Events</h1>
-        <h3>{router.query.slug}</h3>
+        {/* <h3>{router.query.slug}</h3> */}
     </Layout>
   )
 }
