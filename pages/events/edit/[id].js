@@ -1,5 +1,6 @@
 import React from 'react'
 import Layout from '@/components/Layout'
+import Modal from '@/components/Modal'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -24,6 +25,9 @@ export default function EditEventPage({evt}) {
  
   // cek apakah image-nya ada, kalau ada set jadi image.formats.thumbnail.url kalau gak ada jadi null
   const [imagePreview, setImagePreview] = useState(evt.image ? evt.image.formats.thumbnail.url : null)
+
+  // show modal yang telah dibuat, set defaultnya false
+  const [showModal, setShowModal] = useState(false)
 
   const router = useRouter();
 
@@ -70,12 +74,15 @@ export default function EditEventPage({evt}) {
 
   return (
     <Layout title={'Edit Event Page'}>
+
         <Link href="/events">Go Back</Link>
+
         <h1>Edit Event Page</h1>
+
         <ToastContainer />
+
         <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.grid}>
-
                 <div>
                     <label htmlFor="name">Event Name</label>
                     <input
@@ -144,15 +151,15 @@ export default function EditEventPage({evt}) {
 
             </div>
 
-        <div>
-            <label htmlFor="description">Description</label>
-            <textarea
-                type="text"
-                id="description"
-                name="description"
-                value={values.description}
-                onChange={handleInputChange}
-            ></textarea>
+            <div>
+                <label htmlFor="description">Description</label>
+                <textarea
+                    type="text"
+                    id="description"
+                    name="description"
+                    value={values.description}
+                    onChange={handleInputChange}
+                ></textarea>
             </div>
         
             <input type="submit" value="Update Event" className="btn" />
@@ -168,10 +175,16 @@ export default function EditEventPage({evt}) {
             }
 
         <div>
-            <button className='btn-secondary'>
+            <button className='btn-secondary' onClick={() => setShowModal(true)}>
                 <FaImage /> Set Image
             </button>        
-        </div>    
+        </div>
+
+        {/* kalau close, bakal set showModal to false biar ga nampilin modalnya */}
+        <Modal show={showModal} onClose={() => setShowModal(false)}>
+            Image Upload    
+        </Modal>
+
     </Layout>
  )
 }
