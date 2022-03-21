@@ -6,10 +6,31 @@ import styles from '@/styles/Event.module.css'
 import Link from "next/link"
 import Image from "next/image"
 import {FaPencilAlt, FaTimes} from 'react-icons/fa'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/router'
 
 export default function EventPage({ evt }) {
-  const deleteEvent = (e) => {
-    console.log('delete');
+  const router = new useRouter()
+
+  const deleteEvent = async (e) => {
+    // console.log('delete');
+    if(confirm('Are you sure want to delete this Events?')) {
+      // jika oke, maka jalanin ini
+      const res = await fetch(`${API_URL}/events/${evt.id}`, {
+        method: 'DELETE',
+      })
+
+      const data = await res.json()
+
+      // jika tidak ok, tampilin error
+      if(!res.ok) {
+        toast.error(data.message())
+      } else {
+        // redirect ke events setelah delete
+        router.push('/events')
+      }
+    }
   }
   // const router = useRouter()
   // console.log(router);
@@ -37,6 +58,7 @@ export default function EventPage({ evt }) {
               </span>
 
               <h1>{evt.name} </h1>
+              <ToastContainer />
               
               {evt.image && (
                 <div className={styles.image}>
