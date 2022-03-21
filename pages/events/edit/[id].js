@@ -1,6 +1,7 @@
 import React from 'react'
 import Layout from '@/components/Layout'
 import Modal from '@/components/Modal'
+import ImageUpload from '@/components/ImageUpload'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -13,6 +14,7 @@ import Image from 'next/image'
 import { FaImage } from 'react-icons/fa'
 
 export default function EditEventPage({evt}) {
+
   const [values, setValues] = useState({
     name: evt.name,
     performers: evt.performers,
@@ -71,6 +73,15 @@ export default function EditEventPage({evt}) {
             [name]: value
         })
     }
+    
+    const imageUploaded = async (e) => {
+        const res = await fetch(`${API_URL}/events/${evt.id}`);
+        const data = await res.json();
+        // set state ImagePreview jadi image yang diupload
+        setImagePreview(data.image.formats.thumbnail.url);
+        // set to false supaya modalnya close
+        setShowModal(false);
+      };
 
   return (
     <Layout title={'Edit Event Page'}>
@@ -167,12 +178,12 @@ export default function EditEventPage({evt}) {
 
         <h2>Preview Event image</h2>
         {/* cek kalau image previewnya ada  */}
-            {imagePreview ? (
-                <Image src={imagePreview} height={100} width={170} />) : 
-                <div> 
-                    <p>No Image Uploaded</p>
-                </div>
-            }
+        {imagePreview ? (
+            <Image src={imagePreview} height={100} width={170} />) : 
+            <div> 
+                <p>No Image Uploaded</p>
+            </div>
+        }
 
         <div>
             <button className='btn-secondary' onClick={() => setShowModal(true)}>
@@ -182,7 +193,7 @@ export default function EditEventPage({evt}) {
 
         {/* kalau close, bakal set showModal to false biar ga nampilin modalnya */}
         <Modal show={showModal} onClose={() => setShowModal(false)}>
-            Image Upload    
+            <ImageUpload evtId={evt.id} imageUploaded={imageUploaded}/>    
         </Modal>
 
     </Layout>
