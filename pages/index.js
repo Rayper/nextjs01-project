@@ -27,12 +27,12 @@ export default function Home({ events }) {
 }
 
 export async function getStaticProps() {
-  const res = await fetch(`${API_URL}/api/events`)
+  const res = await fetch(`${API_URL}/events?_sort=date:ASC&_limit=3`)
   const events = await res.json()
 
   return {
     // nampilin 3 events aja
-    props: { events:events.slice(0 , 3) },
+    props: { events },
     // 1 second delay untuk mendapatkan data yang terupdate
     revalidate: 1
   }
