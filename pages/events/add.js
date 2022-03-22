@@ -7,8 +7,9 @@ import { API_URL } from '@/config/index'
 import styles from '@/styles/Form.module.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { parseCookies } from '@/helpers/index'
 
-export default function AddEventPage() {
+export default function AddEventPage({ token }) {
   const [values, setValues] = useState({
     name: '',
     performers: '',
@@ -35,14 +36,19 @@ export default function AddEventPage() {
     const res = await fetch(`${API_URL}/events`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(values)
     })
 
     // jika tidak ok, maka keluar error
     if(!res.ok) {
-        toast.error("Something Went Wrong!")
+        if(res.status === 403 || res.status === 401) {
+          toast.error("No Token Included");
+          return 
+        }
+          toast.error("Something Went Wrong!")
     } else {
       const evt = await res.json()
       // generate slug dari event yang baru di add, lalu redirect ke events yang baru di add
@@ -152,4 +158,15 @@ export default function AddEventPage() {
       </form>
     </Layout>
   )
+}
+
+export async function getServerSideProps({ req }) {
+  const {token} = parseCookies(req)
+
+  // assign token ke props supaya bisa diassign ke component AddEventPage
+  return {
+    props: { 
+      token
+    }
+  }
 }
