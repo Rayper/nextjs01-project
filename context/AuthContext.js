@@ -39,7 +39,7 @@ export const AuthProvider = ({children}) => {
         if(res.ok) {
             // set user dari data yang dikirim
             setUser(data.user)
-            router.push('account/dashboard')
+            router.push('/account/dashboard')
         } else {
             // set Error dari data yang dikirim dari login.js
             setError(data.message)
@@ -50,7 +50,15 @@ export const AuthProvider = ({children}) => {
 
     // Logout User
     const logout = async () => {
-        console.log('logout');
+        const res = await fetch(`${NEXT_URL}/api/logout`, {
+            method: 'POST',
+        });
+        
+        if (res.ok) {
+            setUser(null);
+            // redirect ke home
+            router.push('/');
+        }
     }
 
     // Cek jika user sudah login
