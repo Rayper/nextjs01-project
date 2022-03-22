@@ -4,12 +4,33 @@ import { parseCookies } from '@/helpers/index';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Dashboard.module.css'
 import DashboardEvent from '@/components/DashboardEvent';
+import { useRouter } from 'next/router';
 
-export default function DashboardPage({ events }) {
+export default function DashboardPage({ events, token }) {
+    const router = useRouter()
     
-    const deleteEvent = (id) => {
-        console.log(id);
-    };
+    const deleteEvent = async (id) => {
+        // console.log('delete');
+        if(confirm('Are you sure want to delete this Events?')) {
+          // jika oke, maka jalanin ini
+        const res = await fetch(`${API_URL}/events/${id}`, {
+            method: 'DELETE',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    
+        const data = await res.json()
+    
+        // jika tidak ok, tampilin error
+        if(!res.ok) {
+            toast.error(data.message())
+        } else {
+            // stay di halaman Dashboard setelah delete
+            router.reload()
+            }
+        }
+    }
 
     return (
         <Layout title={'Dashboard Page'}>
@@ -38,7 +59,8 @@ export async function getServerSideProps({req}) {
 
     return {
         props: { 
-            events
+            events,
+            token
         }
     }
 }
