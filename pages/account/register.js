@@ -18,17 +18,20 @@ export default function RegisterPage() {
 
     const {register, error} = useContext(AuthContext);
 
+    // jika ada error, tampilin error dengan toast
+    useEffect(() => error && toast.error(error))
+
     const handleSubmit = (e) => {
         e.preventDefault()
 
         // validasi password dan confirm password
         if(password !== confirmpassword) {
-          toast.error('Password do not match with Confirm Password!');
+            toast.error('Password do not match with Confirm Password!');
 
-          return
+            return
         }
 
-        register({username, email, password, confirmpassword})
+        register({ username, email, password })
     }
 
 
@@ -85,7 +88,7 @@ export default function RegisterPage() {
                     />
                 </div>
 
-                <input type="submit" value="Login" className="btn" />
+                <input type="submit" value="Register" className="btn" />
             </form>
             <p>
                 Already have an account ?
