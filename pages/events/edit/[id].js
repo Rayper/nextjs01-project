@@ -12,8 +12,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment'
 import Image from 'next/image'
 import { FaImage } from 'react-icons/fa'
+import { parseCookies } from '@/helpers/index'
 
-export default function EditEventPage({evt}) {
+export default function EditEventPage({ evt, token }) {
 
   const [values, setValues] = useState({
     name: evt.name,
@@ -47,13 +48,18 @@ export default function EditEventPage({evt}) {
     const res = await fetch(`${API_URL}/events/${evt.id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(values)
     })
 
     // jika tidak ok, maka keluar error
     if(!res.ok) {
+        if(res.status === 403 || res.status === 401) {
+            toast.error("You dont have Permission to edit this event!")
+            return 
+        }
         toast.error("Something Went Wrong!")
     } else {
       const evt = await res.json()
@@ -193,23 +199,25 @@ export default function EditEventPage({evt}) {
 
         {/* kalau close, bakal set showModal to false biar ga nampilin modalnya */}
         <Modal show={showModal} onClose={() => setShowModal(false)}>
-            <ImageUpload evtId={evt.id} imageUploaded={imageUploaded}/>    
+            <ImageUpload evtId={evt.id} imageUploaded={imageUploaded} token={token}/>    
         </Modal>
 
     </Layout>
  )
 }
 
-export async function getServerSideProps({params: {id}, req}) {
+export async function getServerSideProps({ params: {id}, req }) {
+    const {token} = parseCookies(req)
     const res = await fetch(`${API_URL}/events/${id}`)
     const evt = await res.json()
 
     // dapetin token untuk authorization pada saat lakukan update events
-    console.log(req.headers.cookie);
+    // console.log(req.headers.cookie);
 
     return {
         props: {
-            evt
+            evt,
+            token
         }
     }
 }
