@@ -15,6 +15,9 @@ export default function LoginPage() {
 
     const {login, error} = useContext(AuthContext);
 
+    // jika ada error, tampilin error dengan toast
+    useEffect(() => error && toast.error(error))
+
     const handleSubmit = (e) => {
         e.preventDefault()
         login({ email, password })
