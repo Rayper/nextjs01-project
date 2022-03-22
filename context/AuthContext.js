@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect, createContext } from 'react'
-import { NEXT_URL } from '../config/index'
+import { API_URL, NEXT_URL } from '../config/index'
 import { useRouter } from 'next/router'
 
 const AuthContext = createContext()
@@ -9,6 +9,10 @@ export const AuthProvider = ({children}) => {
     // create state untuk validasi
     const [user, setUser] = useState(null)
     const [error, setError] = useState(null)
+
+    const router = useRouter()
+
+    useEffect(() => checkUserLoggedIn(), [])
 
     // Register User
     const register = async (user) => {
@@ -35,7 +39,7 @@ export const AuthProvider = ({children}) => {
         if(res.ok) {
             // set user dari data yang dikirim
             setUser(data.user)
-
+            router.push('account/dashboard')
         } else {
             // set Error dari data yang dikirim dari login.js
             setError(data.message)
@@ -50,8 +54,16 @@ export const AuthProvider = ({children}) => {
     }
 
     // Cek jika user sudah login
-    const loggedIn = async (user) => {
-        console.log('Check');
+    const checkUserLoggedIn = async (user) => {
+        const res = await fetch(`${NEXT_URL}/api/user`)
+        const data = await res.json()
+
+        if(res.ok) {
+            // jika oke, maka set data yang dikirim ke state setUser
+            setUser(data.user)
+        } else {
+            setUser(null)
+        }
     }
 
     return (
