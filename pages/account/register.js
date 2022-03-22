@@ -6,6 +6,8 @@ import Link from 'next/link'
 import Layout from '@/components/Layout';
 import styles from '@/styles/Auth.module.css'
 import { FaUser } from 'react-icons/fa'
+import AuthContext from '@/context/AuthContext';
+
 
 export default function RegisterPage() {
     // create state untukk username, email dan password, confirmPassword
@@ -13,6 +15,8 @@ export default function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmpassword, setConfirmPassword] = useState('');
+
+    const {register, error} = useContext(AuthContext);
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -24,7 +28,7 @@ export default function RegisterPage() {
           return
         }
 
-        console.log({username, email, password, confirmpassword})
+        register({username, email, password, confirmpassword})
     }
 
 
