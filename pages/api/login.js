@@ -39,7 +39,7 @@ export default async (req, res) => {
             .json({ message: data.message[0].messages[0].message });
         }
         } else {
-            res.setHeader('');
+            res.setHeader('Allow', 'POST');
             req.status(405).json({ message: `Method ${req.method} not allowed` });
         }
 }
